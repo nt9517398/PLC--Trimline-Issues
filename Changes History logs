@@ -1,0 +1,31 @@
+2026-05-21	KneeJ		P_Stacker > L21_DroppingPlates > R10		Dropping plates delay was locked to 0.3sec. Have now set to 0sec, no delay.
+
+2026-06-11	KneeJ		Tighten up speeds and delays for Outfeed Pack Changes
+					P_Stacker > L25_StackerHoist_UpDown > R37
+						Remove first slow speed when Hoist is returning up. Now just one slow down point at 1700 high (100mm from the top)
+						Incresed Down Speed from 1800 to 2000
+					P_Stacker > L25_StackerHoist_UpDown > R32,37 
+						Add bypass rung, if Droping Plates and Side Aligners are done its ok to drop the pack.	
+					P_Stacker > L25_StackerHoist_UpDown > R47
+						When dropping plates are in use, Restart when Platform is almost up (Load a panel onto the plates). 
+					P_Stacker > L21_DroppingPlates > R11 
+						 Add _L25_Platform_RdyInfeed so Plates wont drop until Lift is full up again. 
+
+				P_Saw_1 > L11_Saw1_Chain > R41
+					Disable code to increse Saws Gap while the Outfeed is unloading. Cant see why you would want to do this?
+
+
+				Infeed Hoist
+					P_FeederArea > L23_FeederHoistConv > R30
+						Change _L23_FeederHoistConv.OUT_RunningFw for _L23_FeederHoistConv.IN_RunFw and _L23_FeederHoistConv.IN_RunBw. This gives the permission to the Hoist Up sooner.
+					P_FeederArea > L24_FeederHoist > R24	
+						Bypass Board under Press Rolls to say stack is empty. Once the panel is off the hoist the hoist can drop.
+					P_FeederArea > L25_FeederCarriage > R44
+						Allow first pickup of new pack to happen before hoist fully reaches the feeding height, 
+
+
+
+2026-06-18	StaggD		Stacker problem was when operator pushes any belt conv stop footswitch the panel stacker pressure rolls would also stop causing a crash if panel is still stuck in the the rolls,  operator would have to 
+				remove panel or reverse belt conv causing downtime solution: 
+				P_Stacker > L20_PressureRoll > Rung 27 new Timer off Delay turned on by OUT_OutfeedConvStoppedFromFootPedal examine off.  
+							       Rung 26 Replaced OUT_OutfeedConvStoppedFromFootPedal examine off contact with a timer off delay TMR_Footpedal_StopOffDelay_Dn  for 1500ms now pressure rolls dont stop till board in stacker
