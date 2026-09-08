@@ -6054,13 +6054,24 @@ Dropping plates down and up
 </Text>
 </Rung>
 <Rung Number="10" Type="N">
+<Comment>
+<![CDATA[Dropping plates settle time limits.
+Max 0.3s, min 0.2s. The minimum stops the plates releasing onto a platform
+that is still decelerating. Set to 0s on 2026-05-21, restored here.]]>
+</Comment>
 <Text>
-<![CDATA[[GRT(HMI_972_1120CPSettingDroppingPlatesUp,0.3) MOV(0.3,HMI_972_1120CPSettingDroppingPlatesUp) ,LES(HMI_972_1120CPStkrSetSideAlignmentStart,0) MOV(0,HMI_972_1120CPStkrSetSideAlignmentStart) ];]]>
+<![CDATA[[GRT(HMI_972_1120CPSettingDroppingPlatesUp,0.3) MOV(0.3,HMI_972_1120CPSettingDroppingPlatesUp) ,LES(HMI_972_1120CPSettingDroppingPlatesUp,0.2) MOV(0.2,HMI_972_1120CPSettingDroppingPlatesUp) ,LES(HMI_972_1120CPStkrSetSideAlignmentStart,0) MOV(0,HMI_972_1120CPStkrSetSideAlignmentStart) ];]]>
 </Text>
 </Rung>
 <Rung Number="11" Type="N">
+<Comment>
+<![CDATA[Release the panel from the plates.
+Side alignment done and platform ready are checked BEFORE the settle timer,
+so HMI_972_1120CPSettingDroppingPlatesUp is timed from the platform being in
+position, not from the infeed promise being granted.]]>
+</Comment>
 <Text>
-<![CDATA[XIC(_L21_Auto)XIC(Out_PromiceFwd_1123M1)[XIC(_L21_PanelComing) MUL(HMI_972_1120CPSettingDroppingPlatesUp,1000,_L21_ToUpDelay.PRE) TON(_L21_ToUpDelay,?,?) XIC(_L21_ToUpDelay.DN) XIC(Out_PromiceFwd_SideAlignment) XIC(_L25_Platform_RdyInfeed) ONS(_L21_Ons_2) ,XIO(HMI_972_1120CP_Pb_DroppingPlatesSelect) XIC(I_PC_Stkr_StackOnPlatform) ]OTL(_L21_Auto_Up);]]>
+<![CDATA[XIC(_L21_Auto)XIC(Out_PromiceFwd_1123M1)[XIC(_L21_PanelComing) XIC(Out_PromiceFwd_SideAlignment) XIC(_L25_Platform_RdyInfeed) MUL(HMI_972_1120CPSettingDroppingPlatesUp,1000,_L21_ToUpDelay.PRE) TON(_L21_ToUpDelay,?,?) XIC(_L21_ToUpDelay.DN) ONS(_L21_Ons_2) ,XIO(HMI_972_1120CP_Pb_DroppingPlatesSelect) XIC(I_PC_Stkr_StackOnPlatform) ]OTL(_L21_Auto_Up);]]>
 </Text>
 </Rung>
 <Rung Number="12" Type="N">

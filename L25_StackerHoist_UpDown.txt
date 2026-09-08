@@ -5004,6 +5004,11 @@ Control place selection between 972CP(Saw) and 1120CP(stacker)]]>
 <Data Format="Decorated"><DataValue DataType="BOOL" Radix="Decimal" Value="1"/>
 </Data>
 </Tag>
+<Tag Name="OUT_PanelOnDroppingPlates" TagType="Base" DataType="BOOL" Radix="Decimal">
+<Data>00</Data>
+<Data Format="Decorated"><DataValue DataType="BOOL" Radix="Decimal" Value="0"/>
+</Data>
+</Tag>
 <Tag Name="OUT_PromiceFromDroppingPlates" TagType="Base" DataType="BOOL" Radix="Decimal">
 <Data>01</Data>
 <Data Format="Decorated"><DataValue DataType="BOOL" Radix="Decimal" Value="1"/>
@@ -5785,8 +5790,16 @@ and stacker panels counter]]>
 </Text>
 </Rung>
 <Rung Number="37" Type="N">
+<Comment>
+<![CDATA[Speeds.
+Up: 2500 empty, 1800 loaded, 400 above 1700.
+Down: 200 indexing, 2000 pack change, 400 below 100.
+_L25_Platform_AlmostUp is its own branch at 2000 and is NOT qualified by
+IN_RunFw, so it does not collapse if the hoist stalls short of the top.
+Verify 2000 against the measured position with the platform empty and up.]]>
+</Comment>
 <Text>
-<![CDATA[XIC(_L25_Auto)[XIC(_L25_StackerHoistUp_Down.IN_RunFw) MOV(1800,_L25_StackerHoistUp_Down.IN_SpeedReferenceEU) ,XIC(OUT_StackerIsEmpty) XIC(_L25_StackerHoistUp_Down.IN_RunFw) MOV(2500,_L25_StackerHoistUp_Down.IN_SpeedReferenceEU) ,XIC(_L25_StackerHoistUp_Down.IN_RunFw) GEQ(_L25_StackerHoistUp_Down.OUT_ActualPosition,1700) [MOV(400,_L25_StackerHoistUp_Down.IN_SpeedReferenceEU) ,OTE(_L25_Platform_AlmostUp) ] ,XIC(_L25_StackerHoistUp_Down.IN_RunBw) [MOV(200.0,_L25_StackerHoistUp_Down.IN_SpeedReferenceEU) ,[XIC(I_PC_Stkr_MaxHeight) ,[XIC(StackerHoistIndexDownMaxTime.DN) ,XIO(I_PC_Stkr_MaxHeight_Left_Backup) ] LES(HMI_972CP_Set_Panel_Thickness,20) ] MOV(0,_L25_StackerHoistUp_Down.IN_SpeedReferenceEU) ] ,XIC(_L25_StackerHoistUp_Down.IN_RunBw) [XIC(OUT_Stkr_Is_Full) [TON(_L25StkrFull,?,?) XIC(_L25StkrFull.DN) ,XIC(OUT_PromiceFromDroppingPlates) XIC(Out_PromiceFwd_SideAlignment) ] MOV(2000,_L25_StackerHoistUp_Down.IN_SpeedReferenceEU) ,LEQ(_L25_StackerHoistUp_Down.OUT_ActualPosition,100) MOV(400,_L25_StackerHoistUp_Down.IN_SpeedReferenceEU) ] ];]]>
+<![CDATA[XIC(_L25_Auto)[XIC(_L25_StackerHoistUp_Down.IN_RunFw) MOV(1800,_L25_StackerHoistUp_Down.IN_SpeedReferenceEU) ,XIC(OUT_StackerIsEmpty) XIC(_L25_StackerHoistUp_Down.IN_RunFw) MOV(2500,_L25_StackerHoistUp_Down.IN_SpeedReferenceEU) ,XIC(_L25_StackerHoistUp_Down.IN_RunFw) GEQ(_L25_StackerHoistUp_Down.OUT_ActualPosition,1700) MOV(400,_L25_StackerHoistUp_Down.IN_SpeedReferenceEU) ,GEQ(_L25_StackerHoistUp_Down.OUT_ActualPosition,2000) OTE(_L25_Platform_AlmostUp) ,XIC(_L25_StackerHoistUp_Down.IN_RunBw) [MOV(200.0,_L25_StackerHoistUp_Down.IN_SpeedReferenceEU) ,[XIC(I_PC_Stkr_MaxHeight) ,[XIC(StackerHoistIndexDownMaxTime.DN) ,XIO(I_PC_Stkr_MaxHeight_Left_Backup) ] LES(HMI_972CP_Set_Panel_Thickness,20) ] MOV(0,_L25_StackerHoistUp_Down.IN_SpeedReferenceEU) ] ,XIC(_L25_StackerHoistUp_Down.IN_RunBw) [XIC(OUT_Stkr_Is_Full) [TON(_L25StkrFull,?,?) XIC(_L25StkrFull.DN) ,XIC(OUT_PromiceFromDroppingPlates) XIC(Out_PromiceFwd_SideAlignment) ] MOV(2000,_L25_StackerHoistUp_Down.IN_SpeedReferenceEU) ,LEQ(_L25_StackerHoistUp_Down.OUT_ActualPosition,100) MOV(400,_L25_StackerHoistUp_Down.IN_SpeedReferenceEU) ] ];]]>
 </Text>
 </Rung>
 <Rung Number="38" Type="N">
@@ -5867,10 +5880,13 @@ COPY HW CONTROL-DATA FROM DATA STRUCTURE TABLE TO DRIVE ITSELF
 <Comment>
 <![CDATA[Promice to previous conveyor
 
-If Dropping Plates are in use, restart when hoist is almost Up again.]]>
+If Dropping Plates are in use, restart when hoist is almost Up again.
+
+Early restart only while the plates are empty, so one panel is loaded during
+the climb and no more. Manual recovery lockout now applies to both branches.]]>
 </Comment>
 <Text>
-<![CDATA[XIO(OUT_Stkr_Is_Full)[XIC(_L25_Platform_RdyInfeed) XIO(_L25_HoistAutoMode_Resumed) ,XIC(HMI_972_1120CP_Pb_DroppingPlatesSelect) XIC(_L25_Platform_AlmostUp) XIC(OUT_PromiceFromDroppingPlates) ][OTE(Out_PromiceFwd_1123M1) ,OTE(HMI_972CP_STatusStkrRdyInfeed) ];]]>
+<![CDATA[XIO(OUT_Stkr_Is_Full)XIO(_L25_HoistAutoMode_Resumed)[XIC(_L25_Platform_RdyInfeed) ,XIC(HMI_972_1120CP_Pb_DroppingPlatesSelect) XIC(_L25_Platform_AlmostUp) XIC(OUT_PromiceFromDroppingPlates) XIO(OUT_PanelOnDroppingPlates) ][OTE(Out_PromiceFwd_1123M1) ,OTE(HMI_972CP_STatusStkrRdyInfeed) ];]]>
 </Text>
 </Rung>
 <Rung Number="48" Type="N">

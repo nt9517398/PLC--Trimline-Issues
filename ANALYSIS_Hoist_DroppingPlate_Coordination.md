@@ -1,5 +1,10 @@
 # Stacker hoist / dropping plate coordination - code review
 
+> **Scope note.** This is the full review of all three routines. The active work is narrowed to the
+> KneeJ and StaggD adjustments recorded in `Changes History logs`; see `KNEEJ_STAGGD_REVIEW.md` for that
+> review and for the corrections applied to the exports on this branch. Findings here that fall outside
+> those adjustments are parked, not withdrawn.
+
 **Version 1.0** (first issue; no prior version to compare against).
 **Scope:** `L20_PressureRoll`, `L21_DroppingPlates`, `L25_StackerHoist_UpDown` (Studio 5000 L5X exports,
 controller `P2850_CHH_Trimming_Repairing`, exported 08 Sep 2026) plus `Changes History logs`.

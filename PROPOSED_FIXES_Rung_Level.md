@@ -1,5 +1,9 @@
 # Proposed rung-level corrections
 
+> **Scope note.** Fixes A, B and D in this document have been superseded by the narrower corrections
+> actually applied to the exports; see `KNEEJ_STAGGD_REVIEW.md`. Fix C and fixes E to I remain parked,
+> because they are original vendor code rather than KneeJ or StaggD adjustments.
+
 **Version 1.0.** Companion to `ANALYSIS_Hoist_DroppingPlate_Coordination.md`.
 Program `P_Stacker`, controller `P2850_CHH_Trimming_Repairing`.
 
